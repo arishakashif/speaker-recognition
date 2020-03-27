@@ -1,3 +1,4 @@
+#import SpeechRecognition as sr
 import pickle
 import numpy as np
 from scipy.io.wavfile import read
@@ -8,10 +9,10 @@ import warnings
 warnings.filterwarnings("ignore")
  
 #path to training data
-source   = "development_set\\"  
+source   = "development_set/"  
  
 #path where training speakers will be saved
-dest = "speaker_models\\"
+dest = "speaker_models/"
 train_file = "development_set_enroll.txt"
 file_paths = open(train_file,'r')
  
@@ -20,10 +21,11 @@ count = 1
 features = np.asarray(())
 for path in file_paths:
     path = path.strip()
+    path = path.replace('\\','/')
     print(path)
-    print(sr)
     # read the audio
     sr,audio = read(source + path)
+#    sr = read(source + path)
     
     # extract 40 dimensional MFCC & delta MFCC features
     vector   = extract_features(audio,sr)
@@ -39,7 +41,7 @@ for path in file_paths:
  
         # dumping the trained gaussian model
         picklefile = path.split("-")[0]+".gmm"
-        pickle.dump(gmm,open(dest + picklefile,'w'))
+        pickle.dump(gmm,open(dest + picklefile,'wb'))
         print('+ modeling completed for speaker:',picklefile," with data point = ",features.shape)
         features = np.asarray(())
         count = 0
